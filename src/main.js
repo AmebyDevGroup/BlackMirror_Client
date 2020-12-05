@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import Echo from 'laravel-echo';
 import CameraService from './cameraService';
+import * as SerialNumber from '../public/sn.json';
 
 window.Pusher = require('pusher-js');
 window.io = require('socket.io-client');
@@ -9,6 +10,7 @@ window.io = require('socket.io-client');
 let eventCounter = 0;
 let activeSections = 0;
 let module_inactive = false;
+const SerialNum = SerialNumber.default.SN;
 
 const handleLoading = (ev) => {
 	const data = Object.values(ev.data);
@@ -16,13 +18,21 @@ const handleLoading = (ev) => {
 	if (activeSections === 0) module_inactive = true;
 };
 
+console.log('serial', SerialNum);
+
 const echo = new Echo({
 	broadcaster: 'socket.io',
 	key: "023a905bee315629c3157500199f5065",
 	// cluster: 'mt1',
 	// encrypted: true
 	host: 'https://ws.myblackmirror.pl',
+	auth: {
+		headers: {
+			'Authorization': `SN ${SerialNum}`,
+		},
+	},
 });
+
 
 setTimeout(() => {
 	const isConnected = echo.connector.socket.connected;
@@ -30,7 +40,7 @@ setTimeout(() => {
 	if (!isConnected) window.Vue.$root.$emit('connectionError', isConnected);
 }, 5000)
 
-echo.join('mirror.123')
+echo.join(`mirror.123`)
 	.here((users) => {
 		console.log(users)
 	})
