@@ -1,9 +1,9 @@
 <template>
-	<transition name="fade-left">
+	<transition name="fade-left" v-if="show">
 		<div class="time" v-if="!prerender">
 			<div class="time__wrapper">
-				<span class="time__item" v-if="hoursValue !== null">{{ hours }}:</span>
-				<span class="time__item" v-if="minutesValue !== null">{{ minutes }}</span>
+				<span class="time__item" v-if="dateTime !== null">{{ dateTime }}</span>
+				<span class="time__item time__item--british" v-if="isBritishTime">{{ cuttedTime }}</span>
 			</div>
 			<div class="time__date">{{ date }}</div>
 		</div>
@@ -11,30 +11,49 @@
 </template>
 
 <script>
-	export default {
+const moment = require('moment-timezone');
+
+export default {
 		name: 'DateTime',
 		data: function () {
 			return {
-				hoursValue: null,
-				minutesValue: null,
+			  show: false,
+			  dateTime: null,
 				date: null,
 				weekday: null,
 				prerender: true,
+        format: 'HH:mm',
+        timezone: 'Europe/Warsaw',
+        isBritishTime: false,
+        cuttedTime: '',
 			}
 		},
 		mounted() {
 			this.handleTimer();
 			this.$root.$on('loading', this.handlePrerender);
+			this.$root.$on('timeChange', this.getTimeData);
+      this.$root.$on('configChange', this.handleConfig);
 		},
 		methods: {
 			handlePrerender(bool) {
 				this.prerender = bool;
 			},
+      handleConfig(event) {
+        this.show = event.time;
+      },
+      getTimeData(data) {
+			  this.format = data.time_format;
+			  this.timezone = data.timezone;
+			  this.isBritishTime = data.isBritishTime;
+      },
 			handleTimer() {
 				setInterval(() => {
-					let now = new Date();
-					this.hoursValue = now.getHours();
-					this.minutesValue = now.getMinutes();
+				  const now = new Date();
+				  this.dateTime = moment().tz(`${this.timezone}`).format(`${this.format}`);
+          if (this.isBritishTime) {
+				    this.cuttedTime = this.dateTime.substr(-3);
+				    this.dateTime = this.dateTime.slice(0, -3);
+          }
 					this.date = now.toLocaleString('PL-pl', {weekday: 'long', month: 'long', day: 'numeric'});
 				}, 1000);
 			}
@@ -57,10 +76,18 @@
 			font-size: 130px;
 			line-height: 1;
 			letter-spacing: 2px;
+
+      &--british {
+        position: absolute;
+        font-size: 60px;
+        right: -115px;
+        top: 10px;
+      }
 		}
 
 		&__wrapper {
 			display: flex;
+      position: relative;
 		}
 
 		&__date {
