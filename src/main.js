@@ -10,6 +10,8 @@ window.io = require('socket.io-client');
 let eventCounter = 0;
 let activeSections = 0;
 let module_inactive = false;
+let ENABLE_CAMERA = false;
+let wasThere = false;
 const SerialNum = SerialNumber.default.SN;
 
 const handleLoading = (ev) => {
@@ -52,15 +54,31 @@ echo.join(`mirror.123`)
 	})
 	.listen('Message', (e) => {
 		console.log(e);
-		if (e.type === "config") handleLoading(e);
+		if (e.type === "config") {
+			handleLoading(e);
+			ENABLE_CAMERA = e.data.camera;
+			console.log('ENABLE_CAMERA inside type', ENABLE_CAMERA);
+		}
 		window.Vue.$root.$emit(`${e.type}Change`, e.data);
 		eventCounter++;
-		if (eventCounter === activeSections || module_inactive) {
+		if (eventCounter === activeSections || module_inactive || wasThere) {
+			if (eventCounter === activeSections) wasThere = true;
+
 			setTimeout(() => {
 				window.Vue.$root.$emit('loading', false);
 				window.Vue.$root.$emit('connectionError', echo.connector.socket.connected);
 				window.Vue.$root.$emit('hideSaver', echo.connector.socket.connected);
-				new CameraService();
+
+				if (ENABLE_CAMERA) {
+					window.cameraInstance = null;
+					window.cameraInstance = new CameraService(ENABLE_CAMERA);
+					window.Vue.$root.$emit('forceSaverDisable', false);
+					window.Vue.$root.$emit('screenSaver', true);
+				} else {
+					window.cameraInstance = null;
+					window.cameraInstance = new CameraService(ENABLE_CAMERA);
+					window.Vue.$root.$emit('forceSaverDisable', true);
+				}
 			}, 500)
 		}
 	});

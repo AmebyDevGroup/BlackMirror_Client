@@ -1,33 +1,54 @@
 import * as faceapi from 'face-api.js';
 
 export default class CameraService {
-	constructor() {
+	constructor(enableDetection = true) {
+		window.enableDetection = enableDetection;
 		this.handleFaceRecognition();
+		if (!window.enableDetection) {
+			if (window.video) {
+				window.video.pause();
+				window.video.src = "";
+				window.video.srcObject.getTracks()[0].stop();
+				window.video.removeEventListener('play', () => {})
+				clearInterval(window.updateInterval);
+				window.updateInterval = null;
+			}
+		}
 	}
 
 	startVideo() {
-		if (navigator.getUserMedia) {
+		if (navigator.getUserMedia && window.enableDetection) {
 			navigator.getUserMedia({ video: true }, this.handleSrc, this.handleError);
 		}
 	}
 
 	handleSrc(stream) {
-		const video = document.querySelector("#videoElement");
-		video.srcObject = stream;
+		window.video = document.querySelector("#videoElement");
+		window.video.srcObject = stream;
 
-		video.addEventListener('play', () => {
-			setInterval(async () => {
-				const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
+		window.video.addEventListener('play', () => {
+			if (window.updateInterval == null) {
+				window.updateInterval = setInterval(async () => {
+					if (!window.enableDetection) {
+						window.video.pause();
+						window.video.src = "";
+						window.video.srcObject.getTracks()[0].stop();
+						window.video.removeEventListener('play', () => {})
+						clearInterval(window.updateInterval);
+						window.updateInterval = null;
+					}
+					const detections = await faceapi.detectAllFaces(window.video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
 
-				if (detections.length === 0) {
-					window.Vue.$root.$emit('screenSaver', false);
-					return;
-				}
+					if (detections.length === 0) {
+						window.Vue.$root.$emit('screenSaver', false);
+						return;
+					}
 
-				if (detections[0].detection.score >= 0.75) {
-					window.Vue.$root.$emit('screenSaver', detections[0].detection.score);
-				}
-			}, 100);
+					if (detections[0].detection.score >= 0.75) {
+						window.Vue.$root.$emit('screenSaver', detections[0].detection.score);
+					}
+				}, 1000);
+			}
 		})
 	}
 

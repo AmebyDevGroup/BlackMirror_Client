@@ -8,6 +8,7 @@
 		data: function () {
 			return {
 				show: false,
+        forceHide: false,
 				counter: 20,
 				timer: null,
 			}
@@ -15,11 +16,15 @@
 		mounted() {
 			this.$root.$on('screenSaver', this.handleScreenSaver);
 			this.$root.$on('hideSaver', this.handleErrorConnection);
-			this.countToHide();
+			this.$root.$on('forceSaverDisable', this.forceSaverDisable);
+			if (!this.forceHide) this.countToHide();
 		},
 		methods: {
       handleErrorConnection(error) {
         this.show = !error;
+      },
+      forceSaverDisable(hide) {
+        this.forceHide = hide;
       },
 			handleScreenSaver(data) {
 				if (!data) return;
@@ -27,6 +32,7 @@
 			},
 			countToHide() {
 				this.timer = setInterval( () => {
+				  if (this.forceHide) return;
 					if (this.counter > 0) {
 						this.counter--;
 						this.show = false;
