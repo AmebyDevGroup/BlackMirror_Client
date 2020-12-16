@@ -67,12 +67,20 @@
 </script>
 
 <style lang="less">
+  html,
+  .app {
+    height: 100%;
+  }
+
 	body {
 		background-color: black;
 		color: white;
 		font-family: 'Montserrat', sans-serif;
-		padding: 15px;
-		overflow: hidden;
+    padding: 20px;
+    overflow: hidden;
+    box-sizing: border-box;
+    margin: 0;
+    height: 100%;
 
 		* {
 			box-sizing: border-box;
@@ -84,7 +92,6 @@
 		justify-content: space-between;
 		align-items: flex-start;
 		flex-wrap: wrap;
-		height: 1600px;
 
 		video {
 			display: none;
