@@ -1,5 +1,5 @@
 <template>
-	<transition name="fade-right">
+	<transition name="fade">
 		<div v-if="show && temperature && !prerender" class="weather">
 			<div>
 				<div class="weather__box">

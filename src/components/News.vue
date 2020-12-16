@@ -1,5 +1,5 @@
 <template>
-	<transition name="fade-bottom">
+	<transition name="fade">
 		<div v-if="show && data && !prerender" class="news">
 			<transition name="expand"
 									@enter="enter"

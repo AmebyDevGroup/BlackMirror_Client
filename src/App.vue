@@ -5,12 +5,12 @@
 			<div class="app__section">
 				<DateTime></DateTime>
 			</div>
-			<div class="app__section">
-				<Calendar></Calendar>
-			</div>
-			<div class="app__section">
-				<Tasks></Tasks>
-			</div>
+<!--			<div class="app__section">-->
+<!--				<Calendar></Calendar>-->
+<!--			</div>-->
+<!--			<div class="app__section">-->
+<!--				<Tasks></Tasks>-->
+<!--			</div>-->
 		</div>
 		<div class="app__wrapper app__wrapper--right">
 			<div class="app__section">
@@ -96,6 +96,14 @@
 		video {
 			display: none;
 		}
+
+    .fade-enter-active, .fade-leave-active {
+      transition: opacity 1.2s;
+    }
+
+    .fade-enter, .fade-leave-to {
+      opacity: 0;
+    }
 
 		.fade-right-enter-active, .fade-right-leave-active {
 			animation: fade-in-right 1.2s both;

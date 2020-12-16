@@ -1,5 +1,5 @@
 <template>
-	<transition name="fade-left" v-if="show">
+	<transition name="fade" v-if="show">
 		<div class="time" v-if="!prerender">
 			<div class="time__wrapper">
 				<span class="time__item" v-if="dateTime !== null">{{ dateTime }}</span>

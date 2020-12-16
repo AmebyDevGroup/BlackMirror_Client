@@ -1,5 +1,5 @@
 <template>
-	<transition name="fade-right">
+	<transition name="fade">
 		<div v-if="show && !prerender" class="home-sensors">
 			<span class="home-sensors__title">{{title}}</span>
 			<div class="home-sensors__item">

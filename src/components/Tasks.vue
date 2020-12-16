@@ -1,5 +1,5 @@
 <template>
-	<transition name="fade-left">
+	<transition name="fade">
 		<div v-if="show && data && !prerender" class="tasks">
 			<span class="tasks__title">{{title}}</span>
 			<ul>

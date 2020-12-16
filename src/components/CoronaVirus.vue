@@ -1,5 +1,5 @@
 <template>
-	<transition name="fade-right">
+	<transition name="fade">
 		<div v-if="show && (dataGlobal || dataPoland) && !prerender" class="corona-virus">
 			<span class="corona-virus__title">{{title}}</span>
 			<div class="corona-virus__wrapper" v-if="dataPoland">

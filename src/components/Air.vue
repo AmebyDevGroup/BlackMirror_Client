@@ -1,5 +1,5 @@
 <template>
-	<transition name="fade-right">
+	<transition name="fade">
 		<div v-if="show && data && !prerender" class="air">
 			<span class="air__title">{{title}}</span>
 			<div class="air__wrapper">

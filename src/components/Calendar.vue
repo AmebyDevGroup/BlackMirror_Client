@@ -1,5 +1,5 @@
 <template>
-	<transition name="fade-left">
+	<transition name="fade">
 		<div v-if="show && data && !prerender" class="calendar">
 			<div v-for="item in data" class="calendar__item">
 				<img src="../assets/calendar.svg" alt="" class="calendar__icon">
