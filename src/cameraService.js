@@ -39,15 +39,19 @@ export default class CameraService {
 					}
 					const detections = await faceapi.detectAllFaces(window.video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
 
+
+
 					if (detections.length === 0) {
+						console.log('nie wykryto');
 						window.Vue.$root.$emit('screenSaver', false);
 						return;
 					}
 
 					if (detections[0].detection.score >= 0.75) {
+						console.log('wykryto', detections[0].detection.score);
 						window.Vue.$root.$emit('screenSaver', detections[0].detection.score);
 					}
-				}, 1000);
+				}, 5000);
 			}
 		})
 	}
