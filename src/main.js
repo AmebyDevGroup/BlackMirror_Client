@@ -35,7 +35,6 @@ const echo = new Echo({
 	},
 });
 
-
 setTimeout(() => {
 	const isConnected = echo.connector.socket.connected;
 	console.log('isConnected', isConnected);

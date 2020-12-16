@@ -37,9 +37,8 @@ export default class CameraService {
 						clearInterval(window.updateInterval);
 						window.updateInterval = null;
 					}
+
 					const detections = await faceapi.detectAllFaces(window.video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
-
-
 
 					if (detections.length === 0) {
 						console.log('nie wykryto');
