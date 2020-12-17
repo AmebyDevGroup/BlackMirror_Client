@@ -12,14 +12,14 @@ def getserial():
 
   return cpuserial
 
-myserial = getserial ()
+myserial = getserial()
 
 
 import json
 import os
 
 # Data to be written
-dictionary ={
+dictionary = {
     "SN" : myserial
 }
 # Serializing jso
