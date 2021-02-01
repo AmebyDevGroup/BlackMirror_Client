@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
 import Echo from 'laravel-echo';
-import CameraService from './cameraService';
 import * as SerialNumber from '../public/sn.json';
 
 window.Pusher = require('pusher-js');
@@ -25,8 +24,6 @@ console.log('serial', SerialNum);
 const echo = new Echo({
 	broadcaster: 'socket.io',
 	key: "023a905bee315629c3157500199f5065",
-	// cluster: 'mt1',
-	// encrypted: true
 	host: 'https://ws.myblackmirror.pl',
 	auth: {
 		headers: {
@@ -37,26 +34,15 @@ const echo = new Echo({
 
 setTimeout(() => {
 	const isConnected = echo.connector.socket.connected;
-	console.log('isConnected', isConnected);
 	if (!isConnected) window.Vue.$root.$emit('connectionError', isConnected);
 }, 5000)
 
-echo.join(`mirror.123`)
-	.here((users) => {
-		console.log(users)
-	})
-	.joining((user) => {
-		console.log(user.name);
-	})
-	.leaving((user) => {
-		console.log(user.name);
-	})
+echo.join(`mirror.${SerialNum}`)
 	.listen('Message', (e) => {
 		console.log(e);
 		if (e.type === "config") {
 			handleLoading(e);
 			ENABLE_CAMERA = e.data.camera;
-			console.log('ENABLE_CAMERA inside type', ENABLE_CAMERA);
 		}
 		window.Vue.$root.$emit(`${e.type}Change`, e.data);
 		eventCounter++;
@@ -69,13 +55,9 @@ echo.join(`mirror.123`)
 				window.Vue.$root.$emit('hideSaver', echo.connector.socket.connected);
 
 				if (ENABLE_CAMERA) {
-					window.cameraInstance = null;
-					window.cameraInstance = new CameraService(ENABLE_CAMERA);
 					window.Vue.$root.$emit('forceSaverDisable', false);
 					window.Vue.$root.$emit('screenSaver', true);
 				} else {
-					window.cameraInstance = null;
-					window.cameraInstance = new CameraService(ENABLE_CAMERA);
 					window.Vue.$root.$emit('forceSaverDisable', true);
 				}
 			}, 500)
