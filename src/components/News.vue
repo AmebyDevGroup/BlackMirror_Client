@@ -1,23 +1,20 @@
 <template>
 	<transition name="fade">
 		<div v-if="show && data && !prerender" class="news">
-			<transition name="expand"
-									@enter="enter"
-									@after-enter="afterEnter"
-									@leave="leave">
-				<div class="news__wrapper" :key="currentTitle">
-					<div class="news__item">
+      <transition name="slide-fade" mode="out-in">
+        <div class="news__wrapper" :key="currentTitle">
+          <div class="news__item">
 						<span class="news__item-date"
-						v-if="currentHours">
+                  v-if="currentHours">
 						{{ currentHours }}:{{ currentMinutes }}
 						</span>
-						<div class="news__item-content">
-								<div class="news__item-title" v-if="currentTitle">{{ currentTitle }}</div>
-								<div class="news__item-description" v-if="currentDescription">{{ currentDescription }}</div>
-						</div>
-					</div>
-				</div>
-			</transition>
+            <div class="news__item-content">
+              <div class="news__item-title" v-if="currentTitle">{{ currentTitle }}</div>
+              <div class="news__item-description" v-if="currentDescription">{{ currentDescription }}</div>
+            </div>
+          </div>
+        </div>
+      </transition>
 		</div>
 	</transition>
 </template>
@@ -45,33 +42,6 @@
 		methods: {
 			handlePrerender(bool) {
 				this.prerender = bool;
-			},
-			enter(element) {
-				const width = getComputedStyle(element).width;
-				element.style.width = width;
-				element.style.position = 'absolute';
-				element.style.visibility = 'hidden';
-				element.style.height = 'auto';
-				const height = getComputedStyle(element).height;
-				element.style.width = null;
-				element.style.position = null;
-				element.style.visibility = null;
-				element.style.height = 0;
-				getComputedStyle(element).height;
-				setTimeout(() => {
-					element.style.height = height;
-				});
-			},
-			afterEnter(element) {
-				element.style.height = 'auto';
-			},
-			leave(element) {
-				const height = getComputedStyle(element).height;
-				element.style.height = height;
-				getComputedStyle(element).height;
-				setTimeout(() => {
-					element.style.height = 0;
-				});
 			},
 			handleConfig(event) {
 				this.show = event.news;
@@ -125,19 +95,16 @@
 
 <style lang="less">
 	.news {
-		.expand-enter-active,
-		.expand-leave-active {
-			transition: all 0.75s ease;
-			visibility: visible;
-			opacity: 1;
-		}
-
-		.expand-enter,
-		.expand-leave-to {
-			height: 0;
-			opacity: 0;
-			visibility: hidden;
-		}
+    .slide-fade-enter-active {
+      transition: all .3s ease;
+    }
+    .slide-fade-leave-active {
+      transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    }
+    .slide-fade-enter, .slide-fade-leave-to {
+      transform: translateY(10px);
+      opacity: 0;
+    }
 
 		&__wrapper {
 			max-width: 950px;

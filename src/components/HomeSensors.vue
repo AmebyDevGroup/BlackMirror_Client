@@ -50,9 +50,9 @@
 				this.show = event.sensors;
 			},
 			handleData(data) {
-				this.humidity = parseInt(data.humidity);
-				this.temperature = parseInt(data.temperature);
-				this.pressure = parseInt(data.pressure);
+				this.humidity = parseInt(Math.round(data.humidity));
+				this.temperature = parseInt(Math.round(data.temperature));
+				this.pressure = parseInt(Math.round(data.pressure));
 			}
 		},
 		computed: {
