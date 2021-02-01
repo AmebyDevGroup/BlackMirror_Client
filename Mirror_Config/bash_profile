@@ -1,5 +1,7 @@
 
-if [ -z $DISPLAY ] && [ $(tty) = /dev/tty1 ]
-then
-  startx -- -nocursor
-fi
+#if [ -z $DISPLAY ] && [ $(tty) = /dev/tty1 ]
+#then
+#  startx -- -nocursor
+#fi
+
+[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && startx -- vt1 -background none -nocursor  &> /dev/null 2>&1

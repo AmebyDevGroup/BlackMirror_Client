@@ -11,4 +11,3 @@ User=BlackMirror
 
 ExecStop=/usr/bin/killall omxplayer
 User=BlackMirror
-StandardOutput=tty
