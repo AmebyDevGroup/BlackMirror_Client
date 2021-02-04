@@ -8,7 +8,6 @@ from git import Repo
 from distutils import dir_util
 import os
 
-
 def getserial():
  cpuserial = "0000000000000000"
  try:
@@ -74,6 +73,7 @@ def web():
     dir_util.mkpath('temp')
     dir_util.remove_tree('temp')
     Repo.clone_from('https://github.com/AmebyDevGroup/BlackMirror_Client.git', 'temp')
+    dir_util.remove_tree('/var/www/html')
     dir_util.copy_tree('temp/dist', "/var/www/html")
     dir_util.remove_tree('temp')
     os.system('sudo shutdown -r 1')
