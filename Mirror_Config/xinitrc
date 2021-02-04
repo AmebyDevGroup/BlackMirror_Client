@@ -3,7 +3,9 @@ xset -dpms
 xset s off
 xset s noblank
 
+
 unclutter &
+exec python /home/BlackMirror/testface.py &
 chromium-browser localhost \
   --window-size=1080,1920 \
   --window-position=0,0 \
