@@ -14,35 +14,12 @@
 			}
 		},
 		mounted() {
-			this.$root.$on('screenSaver', this.handleScreenSaver);
-			this.$root.$on('hideSaver', this.handleErrorConnection);
-			this.$root.$on('forceSaverDisable', this.forceSaverDisable);
-			if (!this.forceHide) this.countToHide();
+			this.$root.$on('showScreenSaver', this.showScreenSaver);
 		},
 		methods: {
-      handleErrorConnection(error) {
-        this.show = !error;
+      showScreenSaver(show) {
+        this.show = show
       },
-      forceSaverDisable(hide) {
-        this.forceHide = hide;
-      },
-			handleScreenSaver(data) {
-				if (!data) return;
-				this.counter = 20;
-			},
-			countToHide() {
-				this.timer = setInterval( () => {
-				  if (this.forceHide) return;
-					if (this.counter > 0) {
-						this.counter--;
-						this.show = false;
-					} else {
-						clearInterval(this.timer);
-						this.countToHide();
-						this.show = true;
-					}
-				}, 1000);
-			}
 		},
 	}
 </script>

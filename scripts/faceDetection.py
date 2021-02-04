@@ -1,8 +1,29 @@
-import numpy as np
-import cv2
+# import required libraries
 import time
+import cv2
 import requests
 
+# if using the picamera, import those libraries as well
+from picamera.array import PiRGBArray
+from picamera import PiCamera
+
+# sleep time to run system
+
+time.sleep(30)
+
+# Get serial number form cpu
+
+
+# point to the haar cascade file in the directory
+faceCascade = cv2.CascadeClassifier(
+    'Cascades/haarcascade_frontalface_default.xml')
+# start the camera and define settings
+camera = PiCamera()
+camera.resolution = (320, 240)  # a smaller resolution means faster processing
+camera.framerate = 32
+rawCapture = PiRGBArray(camera, size=(320, 240))
+
+# give camera time to warm up
 def getserial():
     cpuserial = "0000000000000000"
     try:
@@ -13,52 +34,49 @@ def getserial():
         f.close()
     except:
         cpuserial = "ERROR000000000"
-
     return cpuserial
+
 
 myserial = getserial()
 
-faceCascade = cv2.CascadeClassifier(
-    'Cascades/haarcascade_frontalface_default.xml')
+t = 60
+i = 0
 
-cap = cv2.VideoCapture(0)
-cap.set(3, 640)
-cap.set(4, 480)
-
-t = 15
-
-while True:
-    ret, img = cap.read()
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+# start video frame capture
+for still in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+    # take the frame as an array, convert it to black and white, and look for facial features
+    image = still.array
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     faces = faceCascade.detectMultiScale(
-        gray,
-        scaleFactor=1.2,
+        image,
+        scaleFactor=1.1,
         minNeighbors=5,
-        minSize=(20, 20)
+        minSize=(30, 30),
     )
 
-    secs = t
-    time.sleep(1)
+    time.sleep(0.25)
     t -= 1
 
-    if type(faces) == tuple:
+    if len(faces) == 0:
         if t == 0:
             data = {'turnOff': True}
-            url = 'https://myblackmirror.pl/api/v1/receive_data/camera/'+str(myserial)
-            headers = {'content-length': '108','Content-Type': 'application/json'}
+            url = 'https://myblackmirror.pl/api/v1/receive_data/camera/' + str(myserial)
+            headers = {'content-length': '108', 'Content-Type': 'application/json'}
             req = requests.post(url, headers=headers, json=data)
-
     else:
         if t < 0:
             data = {'turnOff': False}
-            url = 'https://myblackmirror.pl/api/v1/receive_data/camera/'+str(myserial)
-            headers = {'content-length': '108','Content-Type': 'application/json'}
+            url = 'https://myblackmirror.pl/api/v1/receive_data/camera/' + str(myserial)
+            headers = {'content-length': '108', 'Content-Type': 'application/json'}
             req = requests.post(url, headers=headers, json=data)
-        t = 15
+            for (x, y, w, h) in faces:
+                i = i + 1
+        t = 60
 
-    k = cv2.waitKey(30) & 0xff
-    if k == 27:
+    # clear the stream capture
+    rawCapture.truncate(0)
+
+    # set "q" as the key to exit the program when pressed
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord("q"):
         break
-
-cap.release()
-cv2.destroyAllWindows()

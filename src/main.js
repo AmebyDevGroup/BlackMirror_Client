@@ -9,13 +9,13 @@ window.io = require('socket.io-client');
 let eventCounter = 0;
 let activeSections = 0;
 let module_inactive = false;
-let ENABLE_CAMERA = false;
-let wasThere = false;
 const SerialNum = SerialNumber.default.SN;
 
 const handleLoading = (ev) => {
 	const data = Object.values(ev.data);
 	activeSections = [...data].filter(elem => elem === true).length;
+	if (ev.data[""]) activeSections -= 1;
+	if (ev.data.camera) activeSections -= 1;
 	if (activeSections === 0) module_inactive = true;
 };
 
@@ -42,25 +42,22 @@ echo.join(`mirror.${SerialNum}`)
 		console.log(e);
 		if (e.type === "config") {
 			handleLoading(e);
-			ENABLE_CAMERA = e.data.camera;
 		}
 		window.Vue.$root.$emit(`${e.type}Change`, e.data);
 		eventCounter++;
-		if (eventCounter === activeSections || module_inactive || wasThere) {
-			if (eventCounter === activeSections) wasThere = true;
 
-			setTimeout(() => {
-				window.Vue.$root.$emit('loading', false);
-				window.Vue.$root.$emit('connectionError', echo.connector.socket.connected);
-				window.Vue.$root.$emit('hideSaver', echo.connector.socket.connected);
+		if (eventCounter === activeSections || module_inactive) {
+			window.Vue.$root.$emit('loading', false);
+		}
 
-				if (ENABLE_CAMERA) {
-					window.Vue.$root.$emit('forceSaverDisable', false);
-					window.Vue.$root.$emit('screenSaver', true);
-				} else {
-					window.Vue.$root.$emit('forceSaverDisable', true);
-				}
-			}, 500)
+		window.Vue.$root.$emit('connectionError', !echo.connector.socket.connected);
+
+		if (!echo.connector.socket.connected) {
+			window.Vue.$root.$emit('showScreenSaver', echo.connector.socket.connected);
+		}
+
+		if (e.type === 'cameraStatus') {
+			window.Vue.$root.$emit('showScreenSaver', e.data.turnOff);
 		}
 	});
 
