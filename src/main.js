@@ -9,6 +9,7 @@ window.io = require('socket.io-client');
 let eventCounter = 0;
 let activeSections = 0;
 let module_inactive = false;
+let camera_enabled = false;
 const SerialNum = SerialNumber.default.SN;
 
 const handleLoading = (ev) => {
@@ -42,6 +43,7 @@ echo.join(`mirror.${SerialNum}`)
 		console.log(e);
 		if (e.type === "config") {
 			handleLoading(e);
+			camera_enabled = e.data.camera;
 		}
 		window.Vue.$root.$emit(`${e.type}Change`, e.data);
 		eventCounter++;
@@ -54,6 +56,11 @@ echo.join(`mirror.${SerialNum}`)
 
 		if (!echo.connector.socket.connected) {
 			window.Vue.$root.$emit('showScreenSaver', echo.connector.socket.connected);
+		}
+
+		if (!camera_enabled) {
+			window.Vue.$root.$emit('showScreenSaver', false);
+			return;
 		}
 
 		if (e.type === 'cameraStatus') {
