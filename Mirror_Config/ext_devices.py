@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_apscheduler import APScheduler
+from pythonwifi.iwlibs import Wireless
 import RPi.GPIO as GPIO
 import time
 import bme280
@@ -22,6 +23,22 @@ def getserial():
  return cpuserial
 
 myserial = getserial ()
+
+
+def getwifi():
+	wifi = Wireless('wlan0')
+	ssid = wifi.getEssid()
+	aq = wifi.getQualityAvg()
+	signal = aq.siglevel
+ 	return ssid, signal
+
+
+def sendwifi():
+	ssid,signal = getwifi()
+	data ={'nazwa':ssid, 'quality':signal}
+	url = 'https://myblackmirror.pl/api/v1/receive_data/wifi/'+str(myserial)
+	headers = {'content-length': '108','Content-Type': 'application/json'}
+	req = requests.post(url, headers=headers, json=data)
 
 
 def sensor():
@@ -81,6 +98,8 @@ def web():
 
 if __name__ == '__main__':
     scheduler.add_job(id = 'sensor', func=sensor, trigger="interval", minutes=15)
+    scheduler.add_job(id = 'sendwifi', func=sendwifi, trigger="interval", minutes=59)
     scheduler.start()
     status_backlight()
     app.run(host='0.0.0.0')
+
