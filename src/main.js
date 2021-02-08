@@ -58,6 +58,17 @@ echo.join(`mirror.${SerialNum}`)
 			window.Vue.$root.$emit('showScreenSaver', echo.connector.socket.connected);
 		}
 
+		
+		if (e.type === 'backlightStatus') {
+			const status = e.data.power === false ? 'off' : 'on';
+			fetch(`http://localhost:5000/switchBacklight/${status}`);
+		}
+
+		if (e.type === 'systemUpdate' && e.data.systemUpdate === true) {
+			window.Vue.$root.$emit('loading', true);
+			fetch(`http://localhost:5000/system/update`);
+		}
+
 		if (!camera_enabled) {
 			window.Vue.$root.$emit('showScreenSaver', false);
 			return;
