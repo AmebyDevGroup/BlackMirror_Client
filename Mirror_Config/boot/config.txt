@@ -67,4 +67,5 @@ gpu_mem=384
 disable_splash=1
 display_rotate=1
 disable_overscan=1
+avoid_warnings=1
 
