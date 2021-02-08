@@ -57,7 +57,6 @@ echo.join(`mirror.${SerialNum}`)
 		if (!echo.connector.socket.connected) {
 			window.Vue.$root.$emit('showScreenSaver', echo.connector.socket.connected);
 		}
-
 		
 		if (e.type === 'backlightStatus') {
 			const status = e.data.power === false ? 'off' : 'on';
