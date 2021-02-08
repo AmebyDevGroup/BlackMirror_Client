@@ -99,7 +99,8 @@ def web():
 if __name__ == '__main__':
     scheduler.add_job(id = 'sensor', func=sensor, trigger="interval", minutes=15)
     scheduler.add_job(id = 'sendwifi', func=sendwifi, trigger="interval", minutes=59)
-    scheduler.start()
+    scheduler.start() 
+    sendwifi()
     status_backlight()
     app.run(host='0.0.0.0')
 
