@@ -5,12 +5,12 @@
 			<div class="app__section">
 				<DateTime></DateTime>
 			</div>
-<!--			<div class="app__section">-->
-<!--				<Calendar></Calendar>-->
-<!--			</div>-->
-<!--			<div class="app__section">-->
-<!--				<Tasks></Tasks>-->
-<!--			</div>-->
+			<div class="app__section">
+				<Calendar></Calendar>
+			</div>
+			<div class="app__section">
+				<Tasks></Tasks>
+			</div>
 		</div>
 		<div class="app__wrapper app__wrapper--right">
 			<div class="app__section">
