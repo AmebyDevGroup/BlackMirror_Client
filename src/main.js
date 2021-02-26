@@ -10,7 +10,12 @@ let eventCounter = 0;
 let activeSections = 0;
 let module_inactive = false;
 let camera_enabled = false;
-const SerialNum = SerialNumber.default.SN;
+let SerialNum = SerialNumber.default.SN;
+
+const urlSearch = new URLSearchParams(window.location.search);
+const snUrlParam = urlSearch.get('sn');
+
+SerialNum = snUrlParam ? snUrlParam : SerialNum;
 
 const handleLoading = (ev) => {
 	const data = Object.values(ev.data);
@@ -57,7 +62,7 @@ echo.join(`mirror.${SerialNum}`)
 		if (!echo.connector.socket.connected) {
 			window.Vue.$root.$emit('showScreenSaver', echo.connector.socket.connected);
 		}
-		
+
 		if (e.type === 'backlightStatus') {
 			const status = e.data.power === false ? 'off' : 'on';
 			fetch(`http://localhost:5000/switchBacklight/${status}`);
