@@ -7,6 +7,8 @@ import requests
 from git import Repo
 from distutils import dir_util
 import os
+import WifiSensor
+
 
 def getserial():
  cpuserial = "0000000000000000"
@@ -22,6 +24,15 @@ def getserial():
  return cpuserial
 
 myserial = getserial ()
+
+
+def sendwifi():
+        ssid = WifiSensor.wifi_ssid()
+        qlt, lvl = WifiSensor.wifi_quality()
+        data ={'nazwa':ssid, 'quality':qlt, 'level':lvl}
+        url = 'https://myblackmirror.pl/api/v1/receive_data/wifi/'+str(myserial)
+        headers = {'content-length': '108','Content-Type': 'application/json'}
+        req = requests.post(url, headers=headers, json=data)
 
 
 def sensor():
@@ -81,6 +92,9 @@ def web():
 
 if __name__ == '__main__':
     scheduler.add_job(id = 'sensor', func=sensor, trigger="interval", minutes=15)
-    scheduler.start()
+    scheduler.add_job(id = 'sendwifi', func=sendwifi, trigger="interval", minutes=59)
+    scheduler.start() 
+    sendwifi()
     status_backlight()
     app.run(host='0.0.0.0')
+
