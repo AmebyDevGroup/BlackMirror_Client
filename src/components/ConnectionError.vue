@@ -1,7 +1,7 @@
 <template>
   <div class="connection-error" :class="{'active': show}">
     <img src="../assets/connectionError.svg" alt="">
-    <span class="connection-error__message">ERROR CONNECTION</span>
+    <span class="connection-error__message">CONNECTION ERROR</span>
   </div>
 </template>
 

@@ -40,48 +40,48 @@ const echo = new Echo({
 
 setTimeout(() => {
 	const isConnected = echo.connector.socket.connected;
-	if (!isConnected) window.Vue.$root.$emit('connectionError', isConnected);
+	if (!isConnected) window.Vue.$root.$emit('connectionError', true);
 }, 5000)
 
-echo.join(`mirror.${SerialNum}`)
-	.listen('Message', (e) => {
-		console.log(e);
-		if (e.type === "config") {
-			handleLoading(e);
-			camera_enabled = e.data.camera;
-		}
-		window.Vue.$root.$emit(`${e.type}Change`, e.data);
-		eventCounter++;
+echo.join(`mirror.${SerialNum}`).listen('Message', (e) => {
+	console.log('event', e);
+	
+	if (e.type === "config") {
+		handleLoading(e);
+		camera_enabled = e.data.camera;
+	}
+	window.Vue.$root.$emit(`${e.type}Change`, e.data);
+	eventCounter++;
 
-		if (eventCounter === activeSections || module_inactive) {
-			window.Vue.$root.$emit('loading', false);
-		}
+	if (eventCounter === activeSections || module_inactive) {
+		window.Vue.$root.$emit('loading', false);
+	}
 
-		window.Vue.$root.$emit('connectionError', !echo.connector.socket.connected);
+	window.Vue.$root.$emit('connectionError', !echo.connector.socket.connected);
 
-		if (!echo.connector.socket.connected) {
-			window.Vue.$root.$emit('showScreenSaver', echo.connector.socket.connected);
-		}
+	if (!echo.connector.socket.connected) {
+		window.Vue.$root.$emit('showScreenSaver', echo.connector.socket.connected);
+	}
 
-		if (e.type === 'backlightStatus') {
-			const status = e.data.power === false ? 'off' : 'on';
-			fetch(`http://localhost:5000/switchBacklight/${status}`);
-		}
+	if (e.type === 'backlightStatus') {
+		const status = e.data.power === false ? 'off' : 'on';
+		fetch(`http://localhost:5000/switchBacklight/${status}`);
+	}
 
-		if (e.type === 'systemUpdate' && e.data.systemUpdate === true) {
-			window.Vue.$root.$emit('loading', true);
-			fetch(`http://localhost:5000/system/update`);
-		}
+	if (e.type === 'systemUpdate' && e.data.systemUpdate === true) {
+		window.Vue.$root.$emit('loading', true);
+		fetch(`http://localhost:5000/system/update`);
+	}
 
-		if (!camera_enabled) {
-			window.Vue.$root.$emit('showScreenSaver', false);
-			return;
-		}
+	if (!camera_enabled) {
+		window.Vue.$root.$emit('showScreenSaver', false);
+		return;
+	}
 
-		if (e.type === 'cameraStatus') {
-			window.Vue.$root.$emit('showScreenSaver', e.data.turnOff);
-		}
-	});
+	if (e.type === 'cameraStatus') {
+		window.Vue.$root.$emit('showScreenSaver', e.data.turnOff);
+	}
+});
 
 Vue.config.productionTip = false;
 
