@@ -10,6 +10,10 @@
 			<div></div>
 			<div></div>
 		</div>
+    <span v-if="systemLabel" class="loader__info">
+      Trwa przetwarzanie aktualizacji.<br>
+      Nie wyłączaj lustra.
+    </span>
 	</div>
 </template>
 
@@ -19,15 +23,21 @@
 		data: function () {
 			return {
 				loading: true,
+				systemLabel: false,
 			}
 		},
 		mounted() {
 			this.$root.$on('loading', this.handleLoader);
+			this.$root.$on('systemUpdate', this.systemUpdate);
 		},
 		methods: {
 			handleLoader(bool) {
 				this.loading = bool;
-			}
+			},
+      systemUpdate(bool) {
+        this.loading = bool;
+        this.systemLabel = bool;
+      }
 		},
 	}
 </script>
@@ -50,7 +60,14 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
+      flex-direction: column;
 		}
+
+    &__info {
+      font-size: 26px;
+      display: block;
+      margin-top: 35px;
+    }
 
 		@keyframes lds-roller {
 			0% {

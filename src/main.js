@@ -69,7 +69,7 @@ echo.join(`mirror.${SerialNum}`).listen('Message', (e) => {
 	}
 
 	if (e.type === 'systemUpdate' && e.data.systemUpdate === true) {
-		window.Vue.$root.$emit('loading', true);
+		window.Vue.$root.$emit('systemUpdate', true);
 		fetch(`http://localhost:5000/system/update`);
 	}
 
