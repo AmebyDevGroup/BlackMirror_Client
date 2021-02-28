@@ -67,6 +67,7 @@
       font-size: 26px;
       display: block;
       margin-top: 35px;
+      text-align: center;
     }
 
 		@keyframes lds-roller {
