@@ -51,12 +51,8 @@
 					this.show = false;
 					return;
 				}
-				if (data.hasOwnProperty('global')) {
-					this.dataGlobal = data.global;
-				}
-				if (data.hasOwnProperty('poland')) {
-					this.dataPoland = data.poland;
-				}
+        this.dataGlobal = data.hasOwnProperty('global') ? data.global : false;
+        this.dataPoland = data.hasOwnProperty('poland') ? data.poland : false;
 			}
 		},
 		computed: {

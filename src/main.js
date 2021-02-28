@@ -45,7 +45,7 @@ setTimeout(() => {
 
 echo.join(`mirror.${SerialNum}`).listen('Message', (e) => {
 	console.log('event', e);
-	
+
 	if (e.type === "config") {
 		handleLoading(e);
 		camera_enabled = e.data.camera;
